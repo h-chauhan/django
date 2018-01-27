@@ -20,11 +20,9 @@ best pull requests possible. In practice however, committers - who will likely
 be more familiar with the commit guidelines - may decide to bring a commit up
 to standard themselves.
 
-.. note::
-
-    Before merging, but after reviewing, have Jenkins test the pull request by
-    commenting "buildbot, test this please" on the PR.
-    See our `Jenkins wiki page`_ for more details.
+You may want to have Jenkins test the pull request with one of the pull request
+builders that doesn't run automatically, such as Oracle or Selenium. See the
+`Jenkins wiki page`_ for instructions.
 
 .. _Jenkins wiki page: https://code.djangoproject.com/wiki/Jenkins
 
@@ -41,7 +39,7 @@ At this point, you can work on the code. Use ``git rebase -i`` and ``git
 commit --amend`` to make sure the commits have the expected level of quality.
 Once you're ready:
 
-.. code-block:: console
+.. console::
 
     $ # Pull in the latest changes from master.
     $ git checkout master

@@ -108,7 +108,8 @@ Minor features
 Cache
 ~~~~~
 
-* ...
+* The :ref:`local-memory cache backend <local-memory-caching>` now uses a
+  least-recently-used (LRU) culling strategy rather than a pseudo-random one.
 
 CSRF
 ~~~~
@@ -168,6 +169,9 @@ Models
 
 * A ``BinaryField`` may now be set to ``editable=True`` if you wish to include
   it in model forms.
+
+* The new :class:`~django.db.models.functions.Replace` database function
+  replaces strings in an expression.
 
 Requests and Responses
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -245,6 +249,17 @@ Miscellaneous
   This change should be merely cosmetic except perhaps for antiquated browsers
   that don't parse the new format.
 
+* ``allowed_hosts`` is now a required argument of private API
+  ``django.utils.http.is_safe_url()``.
+
+* The ``multiple`` attribute rendered by the
+  :class:`~django.forms.SelectMultiple` widget now uses HTML5 boolean syntax
+  rather than XHTML's ``multiple="multiple"``.
+
+* HTML rendered by form widgets no longer includes a closing slash on void
+  elements, e.g. ``<br>``. This is incompatible within XHTML, although some
+  widgets already used aspects of HTML5 such as boolean attributes.
+
 .. _deprecated-features-2.1:
 
 Features deprecated in 2.1
@@ -259,6 +274,12 @@ Miscellaneous
 * ``django.utils.http.cookie_date()`` is deprecated in favor of
   :func:`~django.utils.http.http_date`, which follows the format of the latest
   RFC.
+
+* ``{% load staticfiles %}`` and ``{% load admin_static %}`` are deprecated
+  in favor of ``{% load static %}``, which works the same.
+
+* ``django.contrib.staticfiles.templatetags.static()`` is deprecated in favor
+  of ``django.templatetags.static.static()``.
 
 .. _removed-features-2.1:
 

@@ -10,7 +10,6 @@ from django.contrib.admin import AdminSite, ModelAdmin
 from django.contrib.admin.helpers import ACTION_CHECKBOX_NAME
 from django.contrib.admin.models import ADDITION, DELETION, LogEntry
 from django.contrib.admin.options import TO_FIELD_VAR
-from django.contrib.admin.templatetags.admin_static import static
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.admin.tests import AdminSeleniumTestCase
 from django.contrib.admin.utils import quote
@@ -18,7 +17,6 @@ from django.contrib.admin.views.main import IS_POPUP_VAR
 from django.contrib.auth import REDIRECT_FIELD_NAME, get_permission_codename
 from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core import mail
 from django.core.checks import Error
 from django.core.files import temp as tempfile
@@ -199,18 +197,6 @@ class AdminViewBasicTest(AdminViewBasicTestCase):
         add_url = reverse('admin:admin_views_article_add')
         response = self.client.get(add_url[:-1])
         self.assertRedirects(response, add_url, status_code=301)
-
-    def test_admin_static_template_tag(self):
-        """
-        admin_static.static points to the collectstatic version
-        (as django.contrib.collectstatic is in INSTALLED_APPS).
-        """
-        old_url = staticfiles_storage.base_url
-        staticfiles_storage.base_url = '/test/'
-        try:
-            self.assertEqual(static('path'), '/test/path')
-        finally:
-            staticfiles_storage.base_url = old_url
 
     def test_basic_add_GET(self):
         """
@@ -1027,7 +1013,7 @@ class AdminCustomTemplateTests(AdminViewBasicTestCase):
         # When a site has multiple passwords in the browser's password manager,
         # a browser pop up asks which user the new password is for. To prevent
         # this, the username is added to the change password form.
-        self.assertContains(response, '<input type="text" name="username" value="super" style="display: none" />')
+        self.assertContains(response, '<input type="text" name="username" value="super" style="display: none">')
 
     def test_extended_bodyclass_template_index(self):
         """
@@ -2969,8 +2955,8 @@ class AdminViewListEditable(TestCase):
         self.assertContains(
             response,
             '<div class="hiddenfields">\n'
-            '<input type="hidden" name="form-0-id" value="%d" id="id_form-0-id" />'
-            '<input type="hidden" name="form-1-id" value="%d" id="id_form-1-id" />\n</div>'
+            '<input type="hidden" name="form-0-id" value="%d" id="id_form-0-id">'
+            '<input type="hidden" name="form-1-id" value="%d" id="id_form-1-id">\n</div>'
             % (story2.id, story1.id),
             html=True
         )
@@ -2999,8 +2985,8 @@ class AdminViewListEditable(TestCase):
         self.assertContains(
             response,
             '<div class="hiddenfields">\n'
-            '<input type="hidden" name="form-0-id" value="%d" id="id_form-0-id" />'
-            '<input type="hidden" name="form-1-id" value="%d" id="id_form-1-id" />\n</div>'
+            '<input type="hidden" name="form-0-id" value="%d" id="id_form-0-id">'
+            '<input type="hidden" name="form-1-id" value="%d" id="id_form-1-id">\n</div>'
             % (story2.id, story1.id),
             html=True
         )
@@ -3057,7 +3043,7 @@ class AdminSearchTest(TestCase):
         """
         response = self.client.get(reverse('admin:auth_user_changelist') + '?q=joe&%s=id' % TO_FIELD_VAR)
         self.assertContains(response, "\n1 user\n")
-        self.assertContains(response, '<input type="hidden" name="%s" value="id"/>' % TO_FIELD_VAR, html=True)
+        self.assertContains(response, '<input type="hidden" name="%s" value="id">' % TO_FIELD_VAR, html=True)
 
     def test_exact_matches(self):
         response = self.client.get(reverse('admin:admin_views_recommendation_changelist') + '?q=bar')
@@ -4388,10 +4374,10 @@ class ReadonlyTest(AdminFieldExtractionMixin, TestCase):
         self.assertContains(response, "Unknown coolness.")
         self.assertContains(response, "foo")
 
-        # Multiline text in a readonly field gets <br /> tags
-        self.assertContains(response, 'Multiline<br />test<br />string')
-        self.assertContains(response, '<div class="readonly">Multiline<br />html<br />content</div>', html=True)
-        self.assertContains(response, 'InlineMultiline<br />test<br />string')
+        # Multiline text in a readonly field gets <br> tags
+        self.assertContains(response, 'Multiline<br>test<br>string')
+        self.assertContains(response, '<div class="readonly">Multiline<br>html<br>content</div>', html=True)
+        self.assertContains(response, 'InlineMultiline<br>test<br>string')
 
         self.assertContains(response, formats.localize(datetime.date.today() - datetime.timedelta(days=7)))
 
@@ -4432,9 +4418,9 @@ class ReadonlyTest(AdminFieldExtractionMixin, TestCase):
         )
         response = self.client.get(reverse('admin:admin_views_post_change', args=(p.pk,)))
         # Checking readonly field.
-        self.assertContains(response, 'test<br /><br />test<br /><br />test<br /><br />test')
+        self.assertContains(response, 'test<br><br>test<br><br>test<br><br>test')
         # Checking readonly field in inline.
-        self.assertContains(response, 'test<br />link')
+        self.assertContains(response, 'test<br>link')
 
     def test_readonly_post(self):
         data = {
@@ -5267,7 +5253,7 @@ class AdminViewLogoutTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'admin/login.html')
         self.assertEqual(response.request['PATH_INFO'], reverse('admin:login'))
-        self.assertContains(response, '<input type="hidden" name="next" value="%s" />' % reverse('admin:index'))
+        self.assertContains(response, '<input type="hidden" name="next" value="%s">' % reverse('admin:index'))
 
 
 @override_settings(ROOT_URLCONF='admin_views.urls')

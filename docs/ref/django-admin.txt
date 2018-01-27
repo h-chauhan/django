@@ -37,7 +37,7 @@ just as well.
 Usage
 =====
 
-.. code-block:: console
+.. console::
 
     $ django-admin <command> [options]
     $ manage.py <command> [options]
@@ -751,9 +751,6 @@ Enables fixing of migration conflicts.
 
 Allows naming the generated migration(s) instead of using a generated name.
 
-Makes ``makemigrations`` exit with error code 1 when no migrations are created
-(or would have been created, if combined with ``--dry-run``).
-
 .. django-admin-option:: --check
 
 Makes ``makemigrations`` exit with a non-zero status when model changes without
@@ -786,8 +783,8 @@ Specifies the database to migrate. Defaults to ``default``.
 
 .. django-admin-option:: --fake
 
-Tells Django to mark the migrations as having been applied or unapplied, but
-without actually running the SQL to change your database schema.
+Marks the migrations up to the target one (following the rules above) as
+applied, but without actually running the SQL to change your database schema.
 
 This is intended for advanced users to manipulate the
 current migration state directly if they're manually applying changes;
@@ -1204,7 +1201,7 @@ files is:
     to template rendering, it might result in an incorrect example.
 
     To work around this problem, you can use the :ttag:`templatetag`
-    templatetag to "escape" the various parts of the template syntax.
+    template tag to "escape" the various parts of the template syntax.
 
     In addition, to allow Python template files that contain Django template
     language syntax while also preventing packaging systems from trying to

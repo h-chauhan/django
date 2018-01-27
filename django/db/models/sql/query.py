@@ -666,10 +666,9 @@ class Query:
             workset = {}
             for model, values in seen.items():
                 for field in model._meta.local_fields:
-                    if field in values:
-                        continue
-                    m = field.model._meta.concrete_model
-                    add_to_dict(workset, m, field)
+                    if field not in values:
+                        m = field.model._meta.concrete_model
+                        add_to_dict(workset, m, field)
             for model, values in must_include.items():
                 # If we haven't included a model in workset, we don't add the
                 # corresponding must_include fields for that model, since an
@@ -1187,8 +1186,7 @@ class Query:
             # lookup parts
             self._lookup_joins = join_info.joins
         except MultiJoin as e:
-            return self.split_exclude(filter_expr, LOOKUP_SEP.join(parts[:e.level]),
-                                      can_reuse, e.names_with_path)
+            return self.split_exclude(filter_expr, can_reuse, e.names_with_path)
 
         # Update used_joins before trimming since they are reused to determine
         # which joins could be later promoted to INNER.
@@ -1525,16 +1523,16 @@ class Query:
             col = targets[0].get_col(join_list[-1], join_info.targets[0])
             return col
 
-    def split_exclude(self, filter_expr, prefix, can_reuse, names_with_path):
+    def split_exclude(self, filter_expr, can_reuse, names_with_path):
         """
         When doing an exclude against any kind of N-to-many relation, we need
         to use a subquery. This method constructs the nested query, given the
         original exclude filter (filter_expr) and the portion up to the first
         N-to-many relation field.
 
-        As an example we could have original filter ~Q(child__name='foo').
-        We would get here with filter_expr = child__name, prefix = child and
-        can_reuse is a set of joins usable for filters in the original query.
+        For example, if the origin filter is ~Q(child__name='foo'), filter_expr
+        is ('child__name', 'foo') and can_reuse is a set of joins usable for
+        filters in the original query.
 
         We will turn this into equivalent of:
             WHERE NOT (pk IN (SELECT parent_id FROM thetable

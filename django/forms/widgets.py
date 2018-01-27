@@ -74,7 +74,7 @@ class Media:
         media = sorted(self._css)
         return chain.from_iterable([
             format_html(
-                '<link href="{}" type="text/css" media="{}" rel="stylesheet" />',
+                '<link href="{}" type="text/css" media="{}" rel="stylesheet">',
                 self.absolute_path(path), medium
             ) for path in self._css[medium]
         ] for medium in media)
@@ -599,8 +599,7 @@ class ChoiceWidget(Widget):
                     str(subvalue) in value and
                     (not has_selected or self.allow_multiple_selected)
                 )
-                if selected and not has_selected:
-                    has_selected = True
+                has_selected |= selected
                 subgroup.append(self.create_option(
                     name, subvalue, sublabel, selected, index,
                     subindex=subindex, attrs=attrs,
@@ -671,7 +670,7 @@ class Select(ChoiceWidget):
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         if self.allow_multiple_selected:
-            context['widget']['attrs']['multiple'] = 'multiple'
+            context['widget']['attrs']['multiple'] = True
         return context
 
     @staticmethod
@@ -889,7 +888,7 @@ class SplitDateTimeWidget(MultiWidget):
     def decompress(self, value):
         if value:
             value = to_current_timezone(value)
-            return [value.date(), value.time().replace(microsecond=0)]
+            return [value.date(), value.time()]
         return [None, None]
 
 
